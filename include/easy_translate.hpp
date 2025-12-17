@@ -344,11 +344,11 @@ public:
     }
 #endif // EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
 
-    /// @brief Set the `Languages`.
-    void setLanguages(const Languages& languages) { languages_ = languages; }
+    /// @brief Set the `Languages` and reset the current language.
+    void setLanguages(const Languages& languages) { languages_ = languages; currentLanguage_.clear(); }
 
-    /// @brief Set the `Languages` that from a json file.
-    void setLanguages(const std::string& filename) { languages_ = Languages::fromFile(filename); }
+    /// @brief Set the `Languages` that from a json file and reset the current language.
+    void setLanguages(const std::string& filename) { setLanguages(Languages::fromFile(filename)); }
 
     /// @brief Get the `Language ID` of the current language.
     const char* currentLanguage() const { return currentLanguage_.c_str(); }
