@@ -1,7 +1,7 @@
-// The "easy translate" library, in c++.
+// The "easy translate" library for C++.
 //
-// Webs: https://github.com/JaderoChan/easy_translate
-// You can contact me by email: c_dl_cn@outlook.com
+// Repository: https://github.com/JaderoChan/easy_translate
+// Contact email: c_dl_cn@outlook.com
 
 // MIT License
 //
@@ -15,32 +15,32 @@
 #include <vector>               // vector
 #include <set>                  // set
 #include <map>                  // map
-#include <fstream>              // ifstream
+#include <fstream>              // ifstream, ofstream
 
 #include <nlohmann/json.hpp>    // json
 
-/// @brief Define this macro to enable easytr::updateTranslationsFiles() function.
-/// @note If you define this macro, the easytr::TranslateManager::translate() function will store
-/// all `Translation ID` to memory used for possible update the `Translations file`s.
+/// @brief Define this macro to enable the easytr::updateTranslationsFiles() function.
+/// @note When this macro is defined, the easytr::TranslateManager::translate() function will store
+/// all `Translation ID`s in memory for potential updates to `Translation files`.
 // #define EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
 
-// Translate function
+// Translation function
 //   - Usage: EASYTR("Translation ID")
-//   - Get the `Translation text` of the given `Translation ID` on current language.
-//   - If the given `Translation ID` is not exist on the current language, return the `Translation ID` itself.
+//   - Returns the `Translation text` for the given `Translation ID` in the current language.
+//   - If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 #define EASYTR(x) easytr::translate(x)
 
-// The following is a sample directory structure and content structure for
-// the `Languages file` and `Translations file`:
+// Below is an example directory structure and content format for
+// the `Languages file` and `Translation files`:
 //
 // languages.json (Languages file)
-//   - en_US (Language ID) : en_US.json (Translations filename)
-//   - zh_CN (Language ID) : zh_CN.json (Translations filename)
+//   - en_US (Language ID) : en_US.json (Translation filename)
+//   - zh_CN (Language ID) : zh_CN.json (Translation filename)
 //   - ...
-//   - ja_JP (Language ID) : ja_JP.json (Translations filename)
-//   - fr_FR (Language ID) : fr_FR.json (Translations filename)
+//   - ja_JP (Language ID) : ja_JP.json (Translation filename)
+//   - fr_FR (Language ID) : fr_FR.json (Translation filename)
 //
-// en_US.json (Translations file)
+// en_US.json (Translation file)
 //   - App.Title  (Translation ID) : Easy Translation (Translation text)
 //   - App.Author (Translation ID) : JaderoChan       (Translation text)
 //   - ...
@@ -51,16 +51,16 @@
 //   - ...
 
 // Languages
-//   - Language ID : Translations filename
+//   - Language ID : Translation filename
 //   - ...
 //
 // Translations
 //   - Translation ID : Translation text
-//   -...
+//   - ...
 
 // Note:
-// The `Languages file` (e.g. languages.json) and the `Transalations file` (e.g. en.json, zh.json) should
-// use the UTF-8 encoding to save.
+// The `Languages file` (e.g., languages.json) and `Translation files` (e.g., en_US.json, zh_CN.json)
+// should be saved using UTF-8 encoding.
 
 namespace easytr
 {
@@ -80,8 +80,8 @@ public:
 
     Languages(const std::map<std::string, std::string>& langs) : languages_(langs) {}
 
-    /// @brief Load the `Languages` from a json string.
-    /// @note If the json is invalid, the `Languages` will be empty.
+    /// @brief Load `Languages` from a JSON string.
+    /// @note If the JSON is invalid, the `Languages` object will be empty.
     static Languages fromJson(const std::string& json)
     {
         using Json = nlohmann::json;
@@ -97,8 +97,8 @@ public:
         return Languages(list);
     }
 
-    /// @brief Load the `Languages` from a json file.
-    /// @note If the json is invalid, the `Languages` will be empty.
+    /// @brief Load `Languages` from a JSON file.
+    /// @note If the JSON is invalid, the `Languages` object will be empty.
     static Languages fromFile(const std::string& filename)
     {
         using Json = nlohmann::json;
@@ -122,7 +122,7 @@ public:
         return Languages(list);
     }
 
-    /// @brief Get the json string.
+    /// @brief Get the JSON representation as a string.
     std::string toJson() const
     {
         nlohmann::json j;
@@ -131,8 +131,8 @@ public:
         return j.dump(4);
     }
 
-    /// @brief Write the `Languages` to a json file.
-    /// @return If the failed to write the file return false else return true.
+    /// @brief Write the `Languages` to a JSON file.
+    /// @return Returns false if writing fails, otherwise returns true.
     bool toFile(const std::string& filename = "languages.json") const
     {
         std::ofstream ofs(filename);
@@ -143,17 +143,17 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translations filename` of the given `Language ID`.
+    /// @brief Get the `Translation filename` for the given `Language ID`.
     const char* at(const std::string& languageId) const
     { return languages_.at(languageId).c_str(); }
 
-    /// @brief Get the number of the `Language ID`.
+    /// @brief Get the number of `Language ID`s.
     size_t count() const { return languages_.size(); }
 
-    /// @brief Check whether has not any `Language ID`.
+    /// @brief Check if there are no `Language ID`s.
     bool empty() const { return count() == 0; }
 
-    /// @brief Check whether exists the given `Language ID`.
+    /// @brief Check if the given `Language ID` exists.
     bool has(const std::string& languageId) const
     { return languages_.find(languageId) != languages_.end(); }
 
@@ -166,26 +166,26 @@ public:
         return ids;
     }
 
-    /// @brief Add a pair of the `Language ID` and `Translations filename`.
-    /// @note If the given `Language ID` already exists, do nothing.
+    /// @brief Add a pair of `Language ID` and `Translation filename`.
+    /// @note If the `Language ID` already exists, no action is taken.
     void add(const std::string& languageId, const std::string& translationsFilename)
     {
         if (!has(languageId))
             languages_.insert({ languageId, translationsFilename });
     }
 
-    /// @brief Remove a `Language ID` and it corresponding `Translations filename`.
+    /// @brief Remove a `Language ID` and its corresponding `Translation filename`.
     void remove(const std::string& languageId)
     {
         if (has(languageId))
             languages_.erase(languageId);
     }
 
-    /// @brief Remove all `Language ID`s and it corresponding `Translations filename`s.
+    /// @brief Remove all `Language ID`s and their corresponding `Translation filename`s.
     void clear() { languages_.clear(); }
 
 private:
-    // {Language ID : Translations filename}
+    // {Language ID : Translation filename}
     std::map<std::string, std::string> languages_;
 };
 
@@ -203,8 +203,8 @@ public:
 
     Translations(const std::map<std::string, std::string>& trans) : translations_(trans) {}
 
-    /// @brief Load the `Translations` from a json string.
-    /// @note If the json is invalid, the `Translations` will be empty.
+    /// @brief Load `Translations` from a JSON string.
+    /// @note If the JSON is invalid, the `Translations` object will be empty.
     static Translations fromJson(const std::string& json)
     {
         using Json = nlohmann::json;
@@ -220,8 +220,8 @@ public:
         return Translations(list);
     }
 
-    /// @brief Load the `Translations` from a json file.
-    /// @note If the json is invalid, the `Translations` will be empty.
+    /// @brief Load `Translations` from a JSON file.
+    /// @note If the JSON is invalid, the `Translations` object will be empty.
     static Translations fromFile(const std::string& filename)
     {
         using Json = nlohmann::json;
@@ -245,7 +245,7 @@ public:
         return Translations(list);
     }
 
-    /// @brief Get the json string.
+    /// @brief Get the JSON representation as a string.
     std::string toJson() const
     {
         nlohmann::json j;
@@ -254,8 +254,8 @@ public:
         return j.dump(4);
     }
 
-    /// @brief Write the `Translations` to a json file.
-    /// @return If the failed to write the file return false else return true.
+    /// @brief Write the `Translations` to a JSON file.
+    /// @return Returns false if writing fails, otherwise returns true.
     bool toFile(const std::string& filename) const
     {
         std::ofstream ofs(filename);
@@ -266,8 +266,8 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translation text` of the given `Translation ID`.
-    /// @note If the given `Translation ID` is not exist, return the `Translation ID` itself.
+    /// @brief Get the `Translation text` for the given `Translation ID`.
+    /// @note If the `Translation ID` does not exist, returns the `Translation ID` itself.
     const char* at(const std::string& tranId) const
     {
         if (!has(tranId))
@@ -275,17 +275,17 @@ public:
         return translations_.at(tranId).c_str();
     }
 
-    /// @brief Get the number of the `Translation ID`.
+    /// @brief Get the number of `Translation ID`s.
     size_t count() const { return translations_.size(); }
 
-    /// @brief Check whether has not any `Translation ID`.
+    /// @brief Check if there are no `Translation ID`s.
     bool empty() const { return count() == 0; }
 
-    /// @brief Check whether exists the given `Translation ID`.
+    /// @brief Check if the given `Translation ID` exists.
     bool has(const std::string& tranId) const
     { return translations_.find(tranId) != translations_.end(); }
 
-    /// @brief Get all `Translation ID`s
+    /// @brief Get all `Translation ID`s.
     std::vector<std::string> getIds() const
     {
         std::vector<std::string> ids;
@@ -294,22 +294,22 @@ public:
         return ids;
     }
 
-    /// @brief Add a pair of the `Translation ID` and `Translation text`.
-    /// @note If the given `Translation ID` already exists, do nothing.
+    /// @brief Add a pair of `Translation ID` and `Translation text`.
+    /// @note If the `Translation ID` already exists, no action is taken.
     void add(const std::string& tranId, const std::string& translation)
     {
         if (!has(tranId))
             translations_.insert({ tranId, translation });
     }
 
-    /// @brief Remove a `Translation ID` and it corresponding `Translation text`.
+    /// @brief Remove a `Translation ID` and its corresponding `Translation text`.
     void remove(const std::string& tranId)
     {
         if (has(tranId))
             translations_.erase(tranId);
     }
 
-    /// @brief Remove all `Translation ID`s and it corresponding `Translation text`s.
+    /// @brief Remove all `Translation ID`s and their corresponding `Translation text`s.
     void clear() { translations_.clear(); }
 
 private:
@@ -327,16 +327,14 @@ public:
         return instance;
     }
 
-    /// @brief Get the `Translation text` of the given `Translation ID` on current language.
-    /// @note If the given `Translation ID` is not exist on the current language, return the `Translation ID` itself.
+    /// @brief Get the `Translation text` for the given `Translation ID` in the current language.
+    /// @note If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 #ifndef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
     const char* translate(const std::string& tranId) const
     {
         return translations_.at(tranId);
     }
 #else
-    /// @brief Get the `Translation text` of the given `Translation ID` on current language.
-    /// @note If the given `Translation ID` is not exist on the current language, return the `Translation ID` itself.
     const char* translate(const std::string& tranId)
     {
         tranIds_.insert(tranId);
@@ -347,14 +345,14 @@ public:
     /// @brief Set the `Languages` and reset the current language.
     void setLanguages(const Languages& languages) { languages_ = languages; currentLanguage_.clear(); }
 
-    /// @brief Set the `Languages` that from a json file and reset the current language.
+    /// @brief Set the `Languages` from a JSON file and reset the current language.
     void setLanguages(const std::string& filename) { setLanguages(Languages::fromFile(filename)); }
 
     /// @brief Get the `Language ID` of the current language.
     const char* currentLanguage() const { return currentLanguage_.c_str(); }
 
     /// @brief Set the current language by `Language ID`.
-    /// @return If success to change return true else return false.
+    /// @return Returns true if successful, otherwise returns false.
     bool setCurrentLanguage(const std::string& languageId)
     {
         if (!hasLanguage(languageId))
@@ -362,7 +360,7 @@ public:
 
     #ifdef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
         bool isFirst = currentLanguage_.empty();
-    #endif // !EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
+    #endif // EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
         currentLanguage_ = languageId;
         translations_ = Translations::fromFile(languages_.at(languageId));
 
@@ -372,7 +370,7 @@ public:
             for (const auto& var : translations_.translations_)
                 tranIds_.insert(var.first);
         }
-    #endif // !EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
+    #endif // EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
 
         return true;
     }
@@ -381,25 +379,24 @@ public:
 
     const Translations& translations() const { return translations_; }
 
-    /// @brief Get the number of the `Language ID`.
+    /// @brief Get the number of `Language ID`s.
     size_t languageCount() const { return languages_.count(); }
 
-    /// @brief Get the number of the `Translation ID` on current language.
+    /// @brief Get the number of `Translation ID`s in the current language.
     size_t translationCount() const { return translations_.count(); }
 
-    /// @brief Check whether exists the given `Language ID`.
+    /// @brief Check if the given `Language ID` exists.
     bool hasLanguage(const std::string& languageId) const { return languages_.has(languageId); }
 
-    /// @brief Check whether exists the given `Translation ID`.
+    /// @brief Check if the given `Translation ID` exists in the current language.
     bool hasTranslation(const std::string& tranId) const { return translations_.has(tranId); }
 
-    /// @brief Update all `Translations file`s. (add pairs of the new `Translation ID` and empty `Translation text`)
-    /// @return The number of updated files.
-    /// @note - The new `Translation ID` is from all `Translation ID` that passed as #translate() function argument in programs.
-    /// @note - This function can help you to easy get the all `Translation ID` that need to translate.
-    /// @attention - Make sure to call this function after you already call all #translate() function,
-    /// if not you will get incomplete `Translation ID` list.
-    /// @attention - This function is not effect when undefine the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES.
+    /// @brief Update all `Translation files` (add new `Translation ID`s with empty `Translation text`).
+    /// @return The number of files updated.
+    /// @note - New `Translation ID`s are collected from all calls to translate() in the program.
+    /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
+    /// @attention - Call this function after all translate() calls to ensure a complete `Translation ID` list.
+    /// @attention - This function has no effect when the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES is undefined.
     size_t updateTranslationsFiles() const
     {
     #ifndef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
@@ -429,7 +426,7 @@ public:
                 }
                 else
                 {
-                    std::map<std::string, std::string> map; // For sort
+                    std::map<std::string, std::string> map; // For sorting
                     for (const auto& tranId : tranIds_)
                         j.contains(tranId) ? map.insert({ tranId, j[tranId] }) : map.insert({ tranId, "" });
 
@@ -465,19 +462,19 @@ private:
 
 #ifdef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
     std::set<std::string> tranIds_;
-#endif // !EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
+#endif // EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
     std::string currentLanguage_;
     Languages languages_;
     Translations translations_;
 };
 
-// For convenience
+// Convenience functions
 
 inline TranslateManager& getTranslateManager()
 { return TranslateManager::getInstance(); }
 
-/// @brief Get the `Translation text` of the given `Translation ID` on current language.
-/// @note If the given `Translation ID` is not exist on the current language, return the `Translation ID` itself.
+/// @brief Get the `Translation text` for the given `Translation ID` in the current language.
+/// @note If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 inline const char* translate(const std::string& tranId)
 { return getTranslateManager().translate(tranId); }
 
@@ -485,7 +482,7 @@ inline const char* translate(const std::string& tranId)
 inline void setLanguages(const Languages& langs)
 { getTranslateManager().setLanguages(langs); }
 
-/// @brief Set the `Languages` that from a json file.
+/// @brief Set the `Languages` from a JSON file.
 inline void setLanguages(const std::string& filename)
 { getTranslateManager().setLanguages(filename); }
 
@@ -493,23 +490,23 @@ inline const char* currentLanguage()
 { return getTranslateManager().currentLanguage(); }
 
 /// @brief Set the current language by `Language ID`.
-/// @return If success to change return true else return false.
+/// @return Returns true if successful, otherwise returns false.
 inline bool setCurrentLanguage(const std::string& languageId)
 { return getTranslateManager().setCurrentLanguage(languageId); }
 
-/// @brief Get the number of the `Language ID`.
+/// @brief Get the number of `Language ID`s.
 inline size_t languageCount()
 { return getTranslateManager().languageCount(); }
 
-/// @brief Get the number of the `Translation ID` on current language.
+/// @brief Get the number of `Translation ID`s in the current language.
 inline size_t translationCount()
 { return getTranslateManager().translationCount(); }
 
-/// @brief Check whether exists the given `Language ID`.
+/// @brief Check if the given `Language ID` exists.
 inline bool hasLanguage(const std::string& languageId)
 { return getTranslateManager().hasLanguage(languageId); }
 
-/// @brief Check whether exists the given `Translation ID`.
+/// @brief Check if the given `Translation ID` exists in the current language.
 inline bool hasTranslation(const std::string& tranId)
 { return getTranslateManager().hasTranslation(tranId); }
 
@@ -519,13 +516,12 @@ inline const Languages& languages()
 inline const Translations& translations()
 { return getTranslateManager().translations(); }
 
-/// @brief Update all `Translations file`s. (add pairs of the new `Translation ID` and empty `Translation text`)
-/// @return The number of updated files.
-/// @note - The new `Translation ID` is from all `Translation ID` that passed as #tr() function argument in programs.
-/// @note - This function can help you to easy get the all `Translation ID` that need to translate.
-/// @attention - Make sure to call this function after you already call all #tr() function,
-/// if not you will get incomplete `Translation ID` list.
-/// @attention - This function is not effect when undefine the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES.
+/// @brief Update all `Translation files` (add new `Translation ID`s with empty `Translation text`).
+/// @return The number of files updated.
+/// @note - New `Translation ID`s are collected from all calls to translate() in the program.
+/// @note - This function helps to easily obtain all `Translation ID`s that need translation.
+/// @attention - Call this function after all translate() calls to ensure a complete `Translation ID` list.
+/// @attention - This function has no effect when the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES is undefined.
 inline size_t updateTranslationsFiles()
 { return getTranslateManager().updateTranslationsFiles(); }
 
