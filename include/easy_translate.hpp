@@ -21,26 +21,26 @@
 
 /// @brief Define this macro to enable the easytr::updateTranslationsFiles() function.
 /// @note When this macro is defined, the easytr::TranslateManager::translate() function will store
-/// all `Translation ID`s in memory for potential updates to `Translation files`.
+/// all `Translation ID`s in memory for potential updates to `Translations files`.
 // #define EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
 
-// Translation function
+// Translate function
 //   - Usage: EASYTR("Translation ID")
 //   - Returns the `Translation text` for the given `Translation ID` in the current language.
 //   - If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 #define EASYTR(x) easytr::translate(x)
 
 // Below is an example directory structure and content format for
-// the `Languages file` and `Translation files`:
+// the `Languages file` and `Translations files`:
 //
 // languages.json (Languages file)
-//   - en_US (Language ID) : en_US.json (Translation filename)
-//   - zh_CN (Language ID) : zh_CN.json (Translation filename)
+//   - en_US (Language ID) : en_US.json (Translations filename)
+//   - zh_CN (Language ID) : zh_CN.json (Translations filename)
 //   - ...
-//   - ja_JP (Language ID) : ja_JP.json (Translation filename)
-//   - fr_FR (Language ID) : fr_FR.json (Translation filename)
+//   - ja_JP (Language ID) : ja_JP.json (Translations filename)
+//   - fr_FR (Language ID) : fr_FR.json (Translations filename)
 //
-// en_US.json (Translation file)
+// en_US.json (Translations file)
 //   - App.Title  (Translation ID) : Easy Translation (Translation text)
 //   - App.Author (Translation ID) : JaderoChan       (Translation text)
 //   - ...
@@ -51,7 +51,7 @@
 //   - ...
 
 // Languages
-//   - Language ID : Translation filename
+//   - Language ID : Translations filename
 //   - ...
 //
 // Translations
@@ -59,7 +59,7 @@
 //   - ...
 
 // Note:
-// The `Languages file` (e.g., languages.json) and `Translation files` (e.g., en_US.json, zh_CN.json)
+// The `Languages file` (e.g., languages.json) and `Translations files` (e.g., en_US.json, zh_CN.json)
 // should be saved using UTF-8 encoding.
 
 namespace easytr
@@ -143,7 +143,7 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translation filename` for the given `Language ID`.
+    /// @brief Get the `Translations filename` for the given `Language ID`.
     const char* at(const std::string& languageId) const
     { return languages_.at(languageId).c_str(); }
 
@@ -166,7 +166,7 @@ public:
         return ids;
     }
 
-    /// @brief Add a pair of `Language ID` and `Translation filename`.
+    /// @brief Add a pair of `Language ID` and `Translations filename`.
     /// @note If the `Language ID` already exists, no action is taken.
     void add(const std::string& languageId, const std::string& translationsFilename)
     {
@@ -174,18 +174,18 @@ public:
             languages_.insert({ languageId, translationsFilename });
     }
 
-    /// @brief Remove a `Language ID` and its corresponding `Translation filename`.
+    /// @brief Remove a `Language ID` and its corresponding `Translations filename`.
     void remove(const std::string& languageId)
     {
         if (has(languageId))
             languages_.erase(languageId);
     }
 
-    /// @brief Remove all `Language ID`s and their corresponding `Translation filename`s.
+    /// @brief Remove all `Language ID`s and their corresponding `Translations filename`s.
     void clear() { languages_.clear(); }
 
 private:
-    // {Language ID : Translation filename}
+    // {Language ID : Translations filename}
     std::map<std::string, std::string> languages_;
 };
 
@@ -391,7 +391,7 @@ public:
     /// @brief Check if the given `Translation ID` exists in the current language.
     bool hasTranslation(const std::string& tranId) const { return translations_.has(tranId); }
 
-    /// @brief Update all `Translation files` (add new `Translation ID`s with empty `Translation text`).
+    /// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
     /// @return The number of files updated.
     /// @note - New `Translation ID`s are collected from all calls to translate() in the program.
     /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
@@ -516,7 +516,7 @@ inline const Languages& languages()
 inline const Translations& translations()
 { return getTranslateManager().translations(); }
 
-/// @brief Update all `Translation files` (add new `Translation ID`s with empty `Translation text`).
+/// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
 /// @return The number of files updated.
 /// @note - New `Translation ID`s are collected from all calls to translate() in the program.
 /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
