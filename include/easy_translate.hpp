@@ -345,9 +345,6 @@ public:
     /// @brief Set the `Languages` and reset the current language.
     void setLanguages(const Languages& languages) { languages_ = languages; currentLanguage_.clear(); }
 
-    /// @brief Set the `Languages` from a JSON file and reset the current language.
-    void setLanguages(const std::string& filename) { setLanguages(Languages::fromFile(filename)); }
-
     /// @brief Get the `Language ID` of the current language.
     const char* currentLanguage() const { return currentLanguage_.c_str(); }
 
@@ -481,10 +478,6 @@ inline const char* translate(const std::string& tranId)
 /// @brief Set the `Languages`.
 inline void setLanguages(const Languages& langs)
 { getTranslateManager().setLanguages(langs); }
-
-/// @brief Set the `Languages` from a JSON file.
-inline void setLanguages(const std::string& filename)
-{ getTranslateManager().setLanguages(filename); }
 
 inline const char* currentLanguage()
 { return getTranslateManager().currentLanguage(); }
