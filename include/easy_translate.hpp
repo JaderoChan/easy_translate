@@ -86,7 +86,7 @@ public:
 
         std::map<std::string, std::string> list;
         for (const auto& var : j.items())
-            list.insert({ var.key(), var.value() });
+            list.insert({var.key(), var.value()});
 
         return Languages(list);
     }
@@ -111,7 +111,7 @@ public:
         std::map<std::string, std::string> list;
         ifs.close();
         for (const auto& var : j.items())
-            list.insert({ var.key(), var.value() });
+            list.insert({var.key(), var.value()});
 
         return Languages(list);
     }
@@ -165,7 +165,7 @@ public:
     void add(const std::string& languageId, const std::string& translationsFilename)
     {
         if (!has(languageId))
-            languages_.insert({ languageId, translationsFilename });
+            languages_.insert({languageId, translationsFilename});
     }
 
     /// @brief Remove a `Language ID` and its corresponding `Translations filename`.
@@ -203,7 +203,7 @@ public:
 
         std::map<std::string, std::string> list;
         for (const auto& var : j.items())
-            list.insert({ var.key(), var.value() });
+            list.insert({var.key(), var.value()});
 
         return Translations(list);
     }
@@ -228,7 +228,7 @@ public:
         std::map<std::string, std::string> list;
         ifs.close();
         for (const auto& var : j.items())
-            list.insert({ var.key(), var.value() });
+            list.insert({var.key(), var.value()});
 
         return Translations(list);
     }
@@ -287,7 +287,7 @@ public:
     void add(const std::string& tranId, const std::string& translation)
     {
         if (!has(tranId))
-            translations_.insert({ tranId, translation });
+            translations_.insert({tranId, translation});
     }
 
     /// @brief Remove a `Translation ID` and its corresponding `Translation text`.
@@ -413,7 +413,7 @@ public:
                 {
                     std::map<std::string, std::string> map; // For sorting
                     for (const auto& tranId : tranIds_)
-                        j.contains(tranId) ? map.insert({ tranId, j[tranId] }) : map.insert({ tranId, "" });
+                        j.contains(tranId) ? map.insert({tranId, j[tranId]}) : map.insert({tranId, ""});
 
                     j.clear();
                     for (const auto& var : map)
