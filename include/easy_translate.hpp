@@ -72,12 +72,6 @@ class Languages
 public:
     Languages() = default;
 
-    Languages(const std::vector<std::pair<std::string, std::string>>& langs)
-    {
-        for (const auto& var : langs)
-            languages_.insert({ var.first, var.second });
-    }
-
     Languages(const std::map<std::string, std::string>& langs) : languages_(langs) {}
 
     /// @brief Load `Languages` from a JSON string.
@@ -194,12 +188,6 @@ class Translations
     friend class TranslateManager;
 public:
     Translations() = default;
-
-    Translations(const std::vector<std::pair<std::string, std::string>>& trans)
-    {
-        for (const auto& var : trans)
-            translations_.insert({ var.first, var.second });
-    }
 
     Translations(const std::map<std::string, std::string>& trans) : translations_(trans) {}
 
