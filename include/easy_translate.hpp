@@ -19,10 +19,10 @@
 
 #include <nlohmann/json.hpp>    // json
 
-/// @brief Define this macro to enable the easytr::updateTranslationsFiles() function.
-/// @note When this macro is defined, the easytr::TranslateManager::translate() function will store
+/// @def EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
+/// @brief Define this macro to enable the `easytr::updateTranslationsFiles()` function.
+/// @note When this macro is defined, the `easytr::TranslateManager::translate()` function will store
 /// all `Translation ID`s in memory for potential updates to `Translations files`.
-// #define EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
 
 // Translate function
 //   - Usage: EASYTR("Translation ID")
@@ -378,10 +378,10 @@ public:
 
     /// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
     /// @return The number of files updated.
-    /// @note - New `Translation ID`s are collected from all calls to translate() in the program.
+    /// @note - New `Translation ID`s are collected from all calls to `translate()` in the program.
     /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
-    /// @attention - Call this function after all translate() calls to ensure a complete `Translation ID` list.
-    /// @attention - This function has no effect when the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES is undefined.
+    /// @attention - Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
+    /// @attention - This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
     size_t updateTranslationsFiles() const
     {
     #ifndef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
@@ -499,10 +499,10 @@ inline const Translations& translations()
 
 /// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
 /// @return The number of files updated.
-/// @note - New `Translation ID`s are collected from all calls to translate() in the program.
+/// @note - New `Translation ID`s are collected from all calls to `translate()` in the program.
 /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
-/// @attention - Call this function after all translate() calls to ensure a complete `Translation ID` list.
-/// @attention - This function has no effect when the macro \ref EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES is undefined.
+/// @attention - Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
+/// @attention - This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
 inline size_t updateTranslationsFiles()
 { return getTranslateManager().updateTranslationsFiles(); }
 
