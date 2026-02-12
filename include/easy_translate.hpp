@@ -378,10 +378,10 @@ public:
 
     /// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
     /// @return The number of files updated.
-    /// @note - New `Translation ID`s are collected from all calls to `translate()` in the program.
-    /// @note - This function helps to easily obtain all `Translation ID`s that need translation.
-    /// @attention - Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
-    /// @attention - This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
+    /// @note New `Translation ID`s are collected from all calls to `translate()` in the program.
+    /// @note This function helps to easily obtain all `Translation ID`s that need translation.
+    /// @attention Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
+    /// @attention This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
     size_t updateTranslationsFiles() const
     {
     #ifndef EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES
@@ -499,10 +499,10 @@ inline const Translations& translations()
 
 /// @brief Update all `Translations files` (add new `Translation ID`s with empty `Translation text`).
 /// @return The number of files updated.
-/// @note - New `Translation ID`s are collected from all calls to `translate()` in the program.
-/// @note - This function helps to easily obtain all `Translation ID`s that need translation.
-/// @attention - Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
-/// @attention - This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
+/// @note New `Translation ID`s are collected from all calls to `translate()` in the program.
+/// @note This function helps to easily obtain all `Translation ID`s that need translation.
+/// @attention Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
+/// @attention This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATIONS_FILES` is undefined.
 inline size_t updateTranslationsFiles()
 { return getTranslateManager().updateTranslationsFiles(); }
 
