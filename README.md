@@ -27,7 +27,7 @@
 
 此类存储了语言ID与译文文件路径的映射。
 
-其基本结构是`{Language ID (key, string) : Translations filename (value, string)}`对。其中`Language ID`表示语言ID，如`EN`、`ZH`等，而`Translations filename`表示语言ID对应的译文文件路径。
+其基本结构是`{Language ID (key, string) : Translations filepath (value, string)}`对。其中`Language ID`表示语言ID，如`EN`、`ZH`等，而`Translations filepath`表示语言ID对应的译文文件路径。
 
 ### Translations
 

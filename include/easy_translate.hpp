@@ -34,11 +34,11 @@
 // the `Languages file` and `Translations files`:
 //
 // languages.json (Languages file)
-//   - en_US (Language ID) : en_US.json (Translations filename)
-//   - zh_CN (Language ID) : zh_CN.json (Translations filename)
+//   - en_US (Language ID) : en_US.json (Translations filepath)
+//   - zh_CN (Language ID) : zh_CN.json (Translations filepath)
 //   - ...
-//   - ja_JP (Language ID) : ja_JP.json (Translations filename)
-//   - fr_FR (Language ID) : fr_FR.json (Translations filename)
+//   - ja_JP (Language ID) : ja_JP.json (Translations filepath)
+//   - fr_FR (Language ID) : fr_FR.json (Translations filepath)
 //
 // en_US.json (Translations file)
 //   - App.Title  (Translation ID) : Easy Translation (Translation text)
@@ -51,7 +51,7 @@
 //   - ...
 
 // Languages
-//   - Language ID : Translations filename
+//   - Language ID : Translations filepath
 //   - ...
 //
 // Translations
@@ -93,11 +93,11 @@ public:
 
     /// @brief Load `Languages` from a JSON file.
     /// @note If the JSON is invalid, the `Languages` object will be empty.
-    static Languages fromFile(const std::string& filename)
+    static Languages fromFile(const std::string& filepath)
     {
         using Json = nlohmann::json;
 
-        std::ifstream ifs(filename);
+        std::ifstream ifs(filepath);
         if (!ifs.is_open())
             return Languages();
 
@@ -127,9 +127,9 @@ public:
 
     /// @brief Write the `Languages` to a JSON file.
     /// @return Returns false if writing fails, otherwise returns true.
-    bool toFile(const std::string& filename = "languages.json") const
+    bool toFile(const std::string& filepath = "languages.json") const
     {
-        std::ofstream ofs(filename);
+        std::ofstream ofs(filepath);
         if (!ofs.is_open())
             return false;
         ofs << toJson();
@@ -137,7 +137,7 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translations filename` for the given `Language ID`.
+    /// @brief Get the `Translations filepath` for the given `Language ID`.
     const char* at(const std::string& languageId) const
     { return languages_.at(languageId).c_str(); }
 
@@ -160,26 +160,26 @@ public:
         return ids;
     }
 
-    /// @brief Add a pair of `Language ID` and `Translations filename`.
+    /// @brief Add a pair of `Language ID` and `Translations filepath`.
     /// @note If the `Language ID` already exists, no action is taken.
-    void add(const std::string& languageId, const std::string& translationsFilename)
+    void add(const std::string& languageId, const std::string& translationsFilepath)
     {
         if (!has(languageId))
-            languages_.insert({languageId, translationsFilename});
+            languages_.insert({languageId, translationsFilepath});
     }
 
-    /// @brief Remove a `Language ID` and its corresponding `Translations filename`.
+    /// @brief Remove a `Language ID` and its corresponding `Translations filepath`.
     void remove(const std::string& languageId)
     {
         if (has(languageId))
             languages_.erase(languageId);
     }
 
-    /// @brief Remove all `Language ID`s and their corresponding `Translations filename`s.
+    /// @brief Remove all `Language ID`s and their corresponding `Translations filepath`s.
     void clear() { languages_.clear(); }
 
 private:
-    // {Language ID : Translations filename}
+    // {Language ID : Translations filepath}
     std::map<std::string, std::string> languages_;
 };
 
@@ -210,11 +210,11 @@ public:
 
     /// @brief Load `Translations` from a JSON file.
     /// @note If the JSON is invalid, the `Translations` object will be empty.
-    static Translations fromFile(const std::string& filename)
+    static Translations fromFile(const std::string& filepath)
     {
         using Json = nlohmann::json;
 
-        std::ifstream ifs(filename);
+        std::ifstream ifs(filepath);
         if (!ifs.is_open())
             return Translations();
 
@@ -244,9 +244,9 @@ public:
 
     /// @brief Write the `Translations` to a JSON file.
     /// @return Returns false if writing fails, otherwise returns true.
-    bool toFile(const std::string& filename) const
+    bool toFile(const std::string& filepath) const
     {
-        std::ofstream ofs(filename);
+        std::ofstream ofs(filepath);
         if (!ofs.is_open())
             return false;
         ofs << toJson();
@@ -392,8 +392,8 @@ public:
         size_t updated = 0;
         for (const auto& languageId : languages_.getIds())
         {
-            std::string filename = languages_.at(languageId);
-            std::ifstream ifs(filename);
+            std::string filepath = languages_.at(languageId);
+            std::ifstream ifs(filepath);
             Json j;
             if (!ifs.is_open())
             {
@@ -423,7 +423,7 @@ public:
                 ifs.close();
             }
 
-            std::ofstream ofs(filename);
+            std::ofstream ofs(filepath);
             if (!ofs.is_open())
                 continue;
 

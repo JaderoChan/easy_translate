@@ -29,7 +29,7 @@ for file in files:
     i += 1
 
 text_ids = dict(sorted(text_ids.items()))
-out_file = input("\nEnter the output file name: ")
+out_file = input("\nEnter the output file path: ")
 with open(out_file, "w", encoding="utf-8") as f:
     json.dump(text_ids, f, ensure_ascii=False, indent=4)
 

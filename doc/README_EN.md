@@ -27,7 +27,7 @@ This is a mini library that can help you quickly complete the UI text translatio
 
 This class stores the mapping between language IDs and translation file paths.
 
-Its basic structure is a `{Language ID (key, string) : Translations filename (value, string)}` pair. Here, `Language ID` represents the language ID, such as `EN`, `ZH`, etc., and `Translations filename` represents the file path of the translation file corresponding to the language ID.
+Its basic structure is a `{Language ID (key, string) : Translations filepath (value, string)}` pair. Here, `Language ID` represents the language ID, such as `EN`, `ZH`, etc., and `Translations filepath` represents the file path of the translation file corresponding to the language ID.
 
 ### Translations
 
