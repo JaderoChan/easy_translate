@@ -31,6 +31,6 @@ for file in files:
 text_ids = dict(sorted(text_ids.items()))
 out_file = input("\nEnter the output file path: ")
 with open(out_file, "w", encoding="utf-8") as f:
-    json.dump(text_ids, f, ensure_ascii=False, indent=4)
+    json.dump(text_ids, f, ensure_ascii=False, indent=2)
 
 print("Done.")

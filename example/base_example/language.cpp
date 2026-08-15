@@ -5,18 +5,15 @@
 
 #include <easy_translate.hpp>
 
-#define LANG_ID_EN "En"
-#define LANG_ID_ZH "Zh"
-
 static LanguageID gCurrentLanguage = LANG_EN;
 
 QString getLanguageIdStr(LanguageID langId)
 {
     switch (langId)
     {
-        case LANG_EN: return LANG_ID_EN;
-        case LANG_ZH: return LANG_ID_ZH;
-        default: return "";
+        case LANG_EN: return "EN";
+        case LANG_ZH: return "ZH";
+        default:      return "";
     }
 }
 
