@@ -14,7 +14,7 @@
 #ifndef EASY_TRANSLATE_HPP
 #define EASY_TRANSLATE_HPP
 
-#include <cstddef>              // size_t
+#include <stddef.h>             // size_t
 #include <string>               // string
 #include <vector>               // vector
 #include <set>                  // set
