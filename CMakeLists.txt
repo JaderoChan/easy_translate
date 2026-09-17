@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(easy_translate VERSION 1.1.0 LANGUAGES CXX)
+project(easy_translate VERSION 1.2.0 LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -50,7 +50,7 @@ install(
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
-option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" OFF)
+option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" ON)
 if(EASY_TRANSLATE_BUILD_EXAMPLE)
     add_subdirectory(./example/base_example)
 endif()

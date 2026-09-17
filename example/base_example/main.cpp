@@ -5,13 +5,13 @@
 #include "mainwidget.h"
 #include "language.h"
 
-#define APP_LANGUAGES_MAPPING_FILEPATH "languages/languages_mapping.json"
+#define APP_LANGUAGES_MAPPING_FILEPATH "languages/language_mapping.json"
 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
 
-    easytr::setLanguagesMapping(easytr::LanguagesMapping::fromFile(APP_LANGUAGES_MAPPING_FILEPATH));
+    easytr::setLanguageMapping(easytr::LanguageMapping::fromFile(APP_LANGUAGES_MAPPING_FILEPATH));
     setLanguage(currentLanguage());
 
     MainWidget w;
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
     int ret = a.exec();
 
-    easytr::updateTranslationsMappingFiles();
+    easytr::updateTranslationMappingFile();
 
     return ret;
 }

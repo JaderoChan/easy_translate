@@ -32,10 +32,10 @@ set_target_properties(
     WIN32_EXECUTABLE TRUE
 )
 
-option(UPDATE_TRANSLATIONS_MAPPING_FILES "Whether update the translations mapping files" ON)
+option(UPDATE_TRANSLATION_MAPPING_FILE "Whether update the translation mapping files" ON)
 target_compile_definitions(
     ${PROJECT_NAME} PRIVATE
-    $<$<BOOL:${UPDATE_TRANSLATIONS_MAPPING_FILES}>:EASY_TRANSLATE_UPDATE_TRANSLATIONS_MAPPING_FILES>
+    $<$<BOOL:${UPDATE_TRANSLATION_MAPPING_FILE}>:EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE>
 )
 
 # Copy the langugaes directory to target directory after build.
