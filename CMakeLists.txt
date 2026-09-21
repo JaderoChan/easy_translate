@@ -9,7 +9,7 @@ include(GNUInstallDirs)
 
 set(3RDPARTY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
-option(EASY_TRANSLATE_USE_BUNDLED_JSON "Use the vendored nlohmann_json instead of requiring an externally installed one" ON)
+option(EASY_TRANSLATE_USE_BUNDLED_JSON "Use the bundled nlohmann_json instead of requiring an externally installed one" ON)
 
 if(EASY_TRANSLATE_USE_BUNDLED_JSON)
     if(NOT TARGET nlohmann_json::nlohmann_json)
