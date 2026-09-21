@@ -6,11 +6,25 @@ add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 include(GNUInstallDirs)
+
 set(3RDPARTY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
+
+option(EASY_TRANSLATE_USE_BUNDLED_JSON "Use the vendored nlohmann_json instead of requiring an externally installed one" ON)
+
+if(EASY_TRANSLATE_USE_BUNDLED_JSON)
+    set(EASY_TRANSLATE_JSON_VENDORED TRUE)
+    if(NOT TARGET nlohmann_json::nlohmann_json)
+        add_subdirectory(${3RDPARTY}/json)
+    endif()
+    target_link_libraries(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
+else()
+    set(EASY_TRANSLATE_JSON_VENDORED FALSE)
+    find_package(nlohmann_json REQUIRED)
+    target_link_libraries(${PROJECT_NAME} INTERFACE nlohmann_json::nlohmann_json)
+endif()
 target_include_directories(
     ${PROJECT_NAME} INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${3RDPARTY}/json/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -40,7 +54,10 @@ install(
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
-install(DIRECTORY include/ ${3RDPARTY}/json/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+if(EASY_TRANSLATE_JSON_VENDORED)
+    install(DIRECTORY ${3RDPARTY}/json/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+endif()
 install(DIRECTORY doc/ DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/license/${PROJECT_NAME})
 install(
