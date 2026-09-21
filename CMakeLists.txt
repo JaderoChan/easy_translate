@@ -12,9 +12,11 @@ set(3RDPARTY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 option(EASY_TRANSLATE_USE_BUNDLED_JSON "Use the vendored nlohmann_json instead of requiring an externally installed one" ON)
 
 if(EASY_TRANSLATE_USE_BUNDLED_JSON)
-    set(EASY_TRANSLATE_JSON_VENDORED TRUE)
     if(NOT TARGET nlohmann_json::nlohmann_json)
         add_subdirectory(${3RDPARTY}/json)
+        set(EASY_TRANSLATE_JSON_VENDORED TRUE)
+    else()
+        set(EASY_TRANSLATE_JSON_VENDORED FALSE)
     endif()
     target_link_libraries(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
 else()
@@ -67,7 +69,7 @@ install(
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
-option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" ON)
+option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" OFF)
 if(EASY_TRANSLATE_BUILD_EXAMPLE)
     add_subdirectory(./example/base_example)
 endif()
