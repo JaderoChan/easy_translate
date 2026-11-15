@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-suffixs = {".h", ".hpp", ".c", "cpp", ".cxx", ".cc"}
+suffixs = {".h", ".hpp", ".c", ".cpp", ".cxx", ".cc"}
 flag = "EASYTR"
 
 dir_path = input("Enter the directory path: ")
@@ -22,8 +22,7 @@ for file in files:
     print(f"Processing file: {file}, {i+1}/{len(files)}")
     with open(file, "r", encoding="utf-8", errors="ignore") as f:
         for line in f:
-            result = re.search(f"{flag}(\"(.*)\")", line)
-            if result:
+            for result in re.finditer(rf'{flag}\(\s*"(.*?)"\s*\)', line):
                 textId = result.group(1)
                 text_ids.update({textId: ""})
     i += 1
