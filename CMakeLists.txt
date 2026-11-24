@@ -72,7 +72,7 @@ if(EASY_TRANSLATE_INSTALL)
     )
 endif()
 
-option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" ON)
+option(EASY_TRANSLATE_BUILD_EXAMPLE "Build the easy translate example program (need Qt)" OFF)
 if(EASY_TRANSLATE_BUILD_EXAMPLE)
     add_subdirectory(./example/base_example)
 endif()
