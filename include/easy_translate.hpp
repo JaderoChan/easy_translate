@@ -7,7 +7,7 @@
 //
 // Copyright (c) 2024 頔珞JaderoChan
 
-/// @version 1.3.0
+/// @version 1.3.1
 /// @date 2026-11-25
 /// @author 𬱖珞 JaderoChan
 
@@ -470,13 +470,13 @@ inline bool hasTranslation(const std::string& tranId)
 /// @note This function helps to easily obtain all `Translation ID`s that need translation.
 /// @attention Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
 /// @sa dumpCollectedTranslationIds()
-std::set<std::string> collectedTranslationIds() const
+inline std::set<std::string> collectedTranslationIds()
 { return getTranslateManager().collectedTranslationIds(); }
 
 /// @brief Dump all collected `Translation ID`s to special file.
 /// @return The number of the collected translations IDs, if dump fail return 0.
 /// @sa collectedTranslationIds()
-size_t dumpCollectedTranslationIds(const std::string& filePath) const
+inline size_t dumpCollectedTranslationIds(const std::string& filePath)
 { return getTranslateManager().dumpCollectedTranslationIds(filePath); }
 #endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
 

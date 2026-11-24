@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(easy_translate VERSION 1.3.0 LANGUAGES CXX)
+project(easy_translate VERSION 1.3.1 LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
