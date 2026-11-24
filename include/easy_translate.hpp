@@ -7,8 +7,8 @@
 //
 // Copyright (c) 2024 頔珞JaderoChan
 
-/// @version 1.2.0
-/// @date 2026-08-15
+/// @version 1.3.0
+/// @date 2026-11-25
 /// @author 𬱖珞 JaderoChan
 
 #ifndef EASY_TRANSLATE_HPP
@@ -16,74 +16,43 @@
 
 #include <stddef.h> // size_t
 #include <string>   // string
-#include <vector>   // vector
 #include <set>      // set
 #include <map>      // map
+#include <istream>  // istream
 #include <fstream>  // ifstream, ofstream
 
 #include <nlohmann/json.hpp> // json
 
-/// @def EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
-/// @brief Define this macro to enable the `easytr::updateTranslationMappingFile()` function.
-/// @note When this macro is defined, the `easytr::TranslateManager::translate()` function will store
-/// all `Translation ID`s in memory for potential updates to `Translation mapping file`s.
+/// @def EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+/// @brief Define this macro to enable the `easytr::collectedTranslationIds()` function.
+/// @note When this macro is defined, the `easytr::translate()` function will store
+/// all `Translation ID`s in memory for dump them.
 
-// Translate function
-//   - Usage: EASYTR("Translation ID")
-//   - Returns the `Translation text` for the given `Translation ID` in the current language.
-//   - If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
+/// Translate function
+///   - Usage: EASYTR("Translation ID")
+///   - Returns the `Translation text` for the given `Translation ID` in the current language.
+///   - If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 #define EASYTR(x) easytr::translate(x)
-
-// Below is an example directory structure and content format for
-// the `Language mapping file` and `Translation mapping file`:
-//
-// language_mapping.json (Language mapping file)
-//   - en_US (Language ID) : en_US.json (Translation mapping filepath)
-//   - zh_CN (Language ID) : zh_CN.json (Translation mapping filepath)
-//   - ...
-//   - ja_JP (Language ID) : ja_JP.json (Translation mapping filepath)
-//   - fr_FR (Language ID) : fr_FR.json (Translation mapping filepath)
-//
-// en_US.json (Translation mapping file)
-//   - App.Title  (Translation ID) : Easy Translation (Translation text)
-//   - App.Author (Translation ID) : JaderoChan       (Translation text)
-//   - ...
-//
-// zh_CN.json (Translation mapping file)
-//   - App.Title  (Translation ID) : 轻松翻译 (Translation text)
-//   - App.Author (Translation ID) : 頔珞     (Translation text)
-//   - ...
-
-// Language mapping file
-//   - Language ID : Translation mapping filepath
-//   - ...
-//
-// Translation mapping file
-//   - Translation ID : Translation text
-//   - ...
-
-// Note:
-// The `Language mapping file` (e.g., language_mapping.json) and `Translation mapping file`
-// (e.g., en_US.json, zh_CN.json) should be saved using UTF-8 encoding.
 
 namespace easytr
 {
 
+/// A mapping table used to record the `Language ID` and the `Translation mapping URL`.
 class LanguageMapping
 {
     friend class TranslateManager;
+
+    using Json = nlohmann::json;
 
 public:
     LanguageMapping() = default;
 
     LanguageMapping(const std::map<std::string, std::string>& langMapping) : data_(langMapping) {}
 
-    /// @brief Load `LanguageMapping` from a JSON string.
-    /// @note If the JSON is invalid, the `LanguageMapping` object will be empty.
-    static LanguageMapping fromJson(const std::string& json)
+    /// @brief Load `Language mapping` from a json string.
+    /// @note If the json is invalid, the `Language mapping` will be empty.
+    static LanguageMapping fromJson(const char* json)
     {
-        using Json = nlohmann::json;
-
         Json j = Json::parse(json, nullptr, false, true);
         if (j.is_discarded())
             return LanguageMapping();
@@ -95,32 +64,32 @@ public:
         return LanguageMapping(list);
     }
 
-    /// @brief Load `LanguageMapping` from a JSON file.
-    /// @note If the JSON is invalid, the `LanguageMapping` object will be empty.
-    static LanguageMapping fromFile(const std::string& filepath)
+    /// @brief Load `Language mapping` from a stream.
+    /// @overload
+    static LanguageMapping fromStream(std::istream& is)
     {
-        using Json = nlohmann::json;
-
-        std::ifstream ifs(filepath);
-        if (!ifs.is_open())
-            return LanguageMapping();
-
-        Json j = Json::parse(ifs, nullptr, false, true);
+        Json j = Json::parse(is, nullptr, false, true);
         if (j.is_discarded())
-        {
-            ifs.close();
             return LanguageMapping();
-        }
 
         std::map<std::string, std::string> list;
-        ifs.close();
         for (const auto& var : j.items())
             list.insert({var.key(), var.value()});
 
         return LanguageMapping(list);
     }
 
-    /// @brief Get the JSON representation as a string.
+    /// @brief Load `Language mapping` from a json file.
+    /// @overload
+    static LanguageMapping fromFile(const std::string& filePath)
+    {
+        std::ifstream ifs(filePath);
+        if (!ifs.is_open())
+            return LanguageMapping();
+        return fromStream(ifs);
+    }
+
+    /// @brief Get the json representation as a string.
     std::string toJson() const
     {
         nlohmann::json j;
@@ -129,11 +98,11 @@ public:
         return j.dump(2);
     }
 
-    /// @brief Write the `LanguageMapping` to a JSON file.
+    /// @brief Write the `Language mapping` to a json file.
     /// @return Returns false if writing fails, otherwise returns true.
-    bool toFile(const std::string& filepath = "language_mapping.json") const
+    bool toFile(const std::string& filePath = "language_mapping.json") const
     {
-        std::ofstream ofs(filepath);
+        std::ofstream ofs(filePath);
         if (!ofs.is_open())
             return false;
         ofs << toJson();
@@ -141,7 +110,7 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translation mapping filepath` for the given `Language ID`.
+    /// @brief Get the `Translation mapping URL` for the given `Language ID`.
     const char* at(const std::string& languageId) const
     { return data_.at(languageId).c_str(); }
 
@@ -156,52 +125,53 @@ public:
     { return data_.find(languageId) != data_.end(); }
 
     /// @brief Get all `Language ID`s.
-    std::vector<std::string> getIds() const
+    std::set<std::string> getIds() const
     {
-        std::vector<std::string> ids;
+        std::set<std::string> ids;
         for (const auto& var : data_)
-            ids.push_back(var.first);
+            ids.insert(var.first);
         return ids;
     }
 
-    /// @brief Add a pair of `Language ID` and `Translation mapping filepath`.
+    /// @brief Add a pair of `Language ID` and `Translation mapping URL`.
     /// @note If the `Language ID` already exists, no action is taken.
-    void add(const std::string& languageId, const std::string& filepath)
+    void add(const std::string& languageId, const std::string& url)
     {
         if (!has(languageId))
-            data_.insert({languageId, filepath});
+            data_.insert({languageId, url});
     }
 
-    /// @brief Remove a `Language ID` and its corresponding `Translation mapping filepath`.
+    /// @brief Remove a `Language ID` and its corresponding `Translation mapping URL`.
     void remove(const std::string& languageId)
     {
         if (has(languageId))
             data_.erase(languageId);
     }
 
-    /// @brief Remove all `Language ID`s and their corresponding `Translation mapping filepath`s.
+    /// @brief Remove all `Language ID`s and their corresponding `Translation mapping URL`s.
     void clear() { data_.clear(); }
 
 private:
-    // {Language ID : Translation mapping filepath}
+    // {Language ID : Translation mapping URL}
     std::map<std::string, std::string> data_;
 };
 
+/// A mapping table used to record the `Translation ID` and the `Translation text`.
 class TranslationMapping
 {
     friend class TranslateManager;
+
+    using Json = nlohmann::json;
 
 public:
     TranslationMapping() = default;
 
     TranslationMapping(const std::map<std::string, std::string>& transMapping) : data_(transMapping) {}
 
-    /// @brief Load `TranslationMapping` from a JSON string.
-    /// @note If the JSON is invalid, the `TranslationMapping` object will be empty.
+    /// @brief Load `Translation mapping` from a json string.
+    /// @note If the json is invalid, the `TranslationMapping` will be empty.
     static TranslationMapping fromJson(const std::string& json)
     {
-        using Json = nlohmann::json;
-
         Json j = Json::parse(json, nullptr, false, true);
         if (j.is_discarded())
             return TranslationMapping();
@@ -213,32 +183,32 @@ public:
         return TranslationMapping(list);
     }
 
-    /// @brief Load `TranslationMapping` from a JSON file.
-    /// @note If the JSON is invalid, the `TranslationMapping` object will be empty.
-    static TranslationMapping fromFile(const std::string& filepath)
+    /// @brief Load `Translation mapping` from a stream.
+    /// @overload
+    static TranslationMapping fromStream(std::istream& is)
     {
-        using Json = nlohmann::json;
-
-        std::ifstream ifs(filepath);
-        if (!ifs.is_open())
-            return TranslationMapping();
-
-        Json j = Json::parse(ifs, nullptr, false, true);
+        Json j = Json::parse(is, nullptr, false, true);
         if (j.is_discarded())
-        {
-            ifs.close();
             return TranslationMapping();
-        }
 
         std::map<std::string, std::string> list;
-        ifs.close();
         for (const auto& var : j.items())
             list.insert({var.key(), var.value()});
 
         return TranslationMapping(list);
     }
 
-    /// @brief Get the JSON representation as a string.
+    /// @brief Load `Translation mapping` from a json file.
+    /// @overload
+    static TranslationMapping fromFile(const std::string& filePath)
+    {
+        std::ifstream ifs(filePath);
+        if (!ifs.is_open())
+            return TranslationMapping();
+        return fromStream(ifs);
+    }
+
+    /// @brief Get the json representation as a string.
     std::string toJson() const
     {
         nlohmann::json j;
@@ -247,11 +217,11 @@ public:
         return j.dump(2);
     }
 
-    /// @brief Write the `TranslationMapping` to a JSON file.
+    /// @brief Write the `Translation mapping` to a json file.
     /// @return Returns false if writing fails, otherwise returns true.
-    bool toFile(const std::string& filepath) const
+    bool toFile(const std::string& filePath) const
     {
-        std::ofstream ofs(filepath);
+        std::ofstream ofs(filePath);
         if (!ofs.is_open())
             return false;
         ofs << toJson();
@@ -279,11 +249,11 @@ public:
     { return data_.find(tranId) != data_.end(); }
 
     /// @brief Get all `Translation ID`s.
-    std::vector<std::string> getIds() const
+    std::set<std::string> getIds() const
     {
-        std::vector<std::string> ids;
+        std::set<std::string> ids;
         for (const auto& var : data_)
-            ids.push_back(var.first);
+            ids.insert(var.first);
         return ids;
     }
 
@@ -314,15 +284,24 @@ private:
 class TranslateManager
 {
 public:
-    static TranslateManager& getInstance()
+    using TranslationMappingLoader = TranslationMapping (*)(const std::string& url);
+
+    static TranslateManager& instance()
     {
         static TranslateManager instance;
         return instance;
     }
 
+    /// @brief Set the custom Translation mapping loader for handle `Translation mapping URL` in `Language mapping`.
+    /// @note Default is nullptr and handle `Translation mapping URL` as local file path.
+    void setTranslationMappingLoader(TranslationMappingLoader loader = nullptr)
+    {
+        loader_ = loader;
+    }
+
     /// @brief Get the `Translation text` for the given `Translation ID` in the current language.
     /// @note If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
-#ifndef EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+#ifndef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
     const char* translate(const std::string& tranId) const
     {
         return transMapping_.at(tranId);
@@ -333,9 +312,9 @@ public:
         tranIds_.insert(tranId);
         return transMapping_.at(tranId);
     }
-#endif // EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+#endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
 
-    /// @brief Set the `LanguageMapping` and reset the current language.
+    /// @brief Set the `Language mapping` and reset the current language.
     void setLanguageMapping(const LanguageMapping& langMapping)
     { langMapping_ = langMapping; currentLanguage_.clear(); }
 
@@ -350,19 +329,22 @@ public:
         if (!hasLanguage(languageId))
             return false;
 
-    #ifdef EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+    #ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
         bool isFirst = currentLanguage_.empty();
-    #endif // EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+    #endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
         currentLanguage_ = languageId;
-        transMapping_ = TranslationMapping::fromFile(langMapping_.at(languageId));
 
-    #ifdef EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+        transMapping_ = loader_
+            ? loader_(langMapping_.at(languageId))
+            : TranslationMapping::fromFile(langMapping_.at(languageId));
+
+    #ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
         if (isFirst)
         {
             for (const auto& var : transMapping_.data_)
                 tranIds_.insert(var.first);
         }
-    #endif // EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+    #endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
 
         return true;
     }
@@ -383,66 +365,36 @@ public:
     /// @brief Check if the given `Translation ID` exists in the current language.
     bool hasTranslation(const std::string& tranId) const { return transMapping_.has(tranId); }
 
-    /// @brief Update all `Translation mapping file` (add new `Translation ID`s with empty `Translation text`).
-    /// @return The number of files updated.
+#ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+    /// @brief Get all collected `Translation ID`s.
     /// @note New `Translation ID`s are collected from all calls to `translate()` in the program.
     /// @note This function helps to easily obtain all `Translation ID`s that need translation.
     /// @attention Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
-    /// @attention This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE`
-    ///            is undefined.
-    size_t updateTranslationMappingFile() const
+    /// @sa dumpCollectedTranslationIds()
+    std::set<std::string> collectedTranslationIds() const
     {
-    #ifndef EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
-        return 0;
-    #else
+        return tranIds_;
+    }
+
+    /// @brief Dump all collected `Translation ID`s to special file.
+    /// @return The number of the collected translations IDs, if dump fail return 0.
+    /// @sa collectedTranslationIds()
+    size_t dumpCollectedTranslationIds(const std::string& filePath) const
+    {
         using Json = nlohmann::json;
 
-        size_t updated = 0;
-        for (const auto& languageId : langMapping_.getIds())
-        {
-            std::string filepath = langMapping_.at(languageId);
-            std::ifstream ifs(filepath);
-            Json j;
-            if (!ifs.is_open())
-            {
-                for (const auto& tranId : tranIds_)
-                    j[tranId] = "";
-            }
-            else
-            {
-                j = Json::parse(ifs, nullptr, false, true);
-                if (j.is_discarded())
-                {
-                    j = Json();
-                    for (const auto& tranId : tranIds_)
-                        j[tranId] = "";
-                }
-                else
-                {
-                    std::map<std::string, std::string> map; // For sorting
-                    for (const auto& tranId : tranIds_)
-                        j.contains(tranId) ? map.insert({tranId, j[tranId]}) : map.insert({tranId, ""});
+        Json j = Json::object();
+        for (const auto& tranId : tranIds_)
+            j[tranId] = std::string();
 
-                    j.clear();
-                    for (const auto& var : map)
-                        j[var.first] = var.second;
-                }
+        std::ofstream ofs(filePath);
+        if (!ofs.is_open())
+            return 0;
 
-                ifs.close();
-            }
-
-            std::ofstream ofs(filepath);
-            if (!ofs.is_open())
-                continue;
-
-            ofs << j.dump(2);
-            ofs.close();
-            updated++;
-        }
-
-        return updated;
-    #endif // EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
+        ofs << j.dump(2);
+        return tranIds_.size();
     }
+#endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
 
 private:
     TranslateManager() = default;
@@ -453,28 +405,35 @@ private:
 
     TranslateManager& operator=(const TranslateManager&) = delete;
 
-#ifdef EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
-    std::set<std::string> tranIds_;
-#endif // EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE
-    std::string        currentLanguage_;
-    LanguageMapping    langMapping_;
-    TranslationMapping transMapping_;
+#ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+    std::set<std::string>    tranIds_;
+#endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+    std::string              currentLanguage_;
+    LanguageMapping          langMapping_;
+    TranslationMapping       transMapping_;
+    TranslationMappingLoader loader_ = nullptr;
 };
 
 // Convenience functions
 
 inline TranslateManager& getTranslateManager()
-{ return TranslateManager::getInstance(); }
+{ return TranslateManager::instance(); }
+
+/// @brief Set the custom Translation mapping loader for handle `Translation mapping URL` in `Language mapping`.
+/// @note Default is nullptr and handle `Translation mapping URL` as local file path.
+inline void setTranslationMappingLoader(TranslateManager::TranslationMappingLoader loader = nullptr)
+{ getTranslateManager().setTranslationMappingLoader(loader); }
 
 /// @brief Get the `Translation text` for the given `Translation ID` in the current language.
 /// @note If the `Translation ID` does not exist in the current language, returns the `Translation ID` itself.
 inline const char* translate(const std::string& tranId)
 { return getTranslateManager().translate(tranId); }
 
-/// @brief Set the `LanguageMapping`.
+/// @brief Set the `Language mapping` and reset the current language.
 inline void setLanguageMapping(const LanguageMapping& langs)
 { getTranslateManager().setLanguageMapping(langs); }
 
+/// @brief Get the `Language ID` of the current language.
 inline const char* currentLanguage()
 { return getTranslateManager().currentLanguage(); }
 
@@ -482,6 +441,12 @@ inline const char* currentLanguage()
 /// @return Returns true if successful, otherwise returns false.
 inline bool setCurrentLanguage(const std::string& languageId)
 { return getTranslateManager().setCurrentLanguage(languageId); }
+
+inline const LanguageMapping& languageMapping()
+{ return getTranslateManager().languageMapping(); }
+
+inline const TranslationMapping& translationMapping()
+{ return getTranslateManager().translationMapping(); }
 
 /// @brief Get the number of `Language ID`s.
 inline size_t languageCount()
@@ -499,21 +464,21 @@ inline bool hasLanguage(const std::string& languageId)
 inline bool hasTranslation(const std::string& tranId)
 { return getTranslateManager().hasTranslation(tranId); }
 
-inline const LanguageMapping& languageMapping()
-{ return getTranslateManager().languageMapping(); }
-
-inline const TranslationMapping& translationMapping()
-{ return getTranslateManager().translationMapping(); }
-
-/// @brief Update all `Translation mapping file` (add new `Translation ID`s with empty `Translation text`).
-/// @return The number of files updated.
+#ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+/// @brief Get all collected `Translation ID`s.
 /// @note New `Translation ID`s are collected from all calls to `translate()` in the program.
 /// @note This function helps to easily obtain all `Translation ID`s that need translation.
 /// @attention Call this function after all `translate()` calls to ensure a complete `Translation ID` list.
-/// @attention This function has no effect when the macro `EASY_TRANSLATE_UPDATE_TRANSLATION_MAPPING_FILE`
-///            is undefined.
-inline size_t updateTranslationMappingFile()
-{ return getTranslateManager().updateTranslationMappingFile(); }
+/// @sa dumpCollectedTranslationIds()
+std::set<std::string> collectedTranslationIds() const
+{ return getTranslateManager().collectedTranslationIds(); }
+
+/// @brief Dump all collected `Translation ID`s to special file.
+/// @return The number of the collected translations IDs, if dump fail return 0.
+/// @sa collectedTranslationIds()
+size_t dumpCollectedTranslationIds(const std::string& filePath) const
+{ return getTranslateManager().dumpCollectedTranslationIds(filePath); }
+#endif // EASY_TRANSLATE_COLLECT_TRANSLATION_ID
 
 } // namespace easytr
 

@@ -1,6 +1,6 @@
 # Easy Translate
 
-[**简体中文** | [English](./doc/README_EN.md)]
+[**简体中文** | [English](./README_EN.md)]
 
 ## 介绍
 
@@ -15,7 +15,6 @@
 ## 缺点
 
 - 无译文文件动态载入功能，在切换语言时会将目标语言的所有译文载入至内存。
-- 严格依赖于文件系统，这意味着本库只接受文件形式的译文文件。
 
 ## 依赖
 
@@ -23,21 +22,21 @@
 
 ## 大纲
 
-### Languages Mapping
+### Language Mapping
 
-此类存储了语言ID与 **译文映射文件** 路径的映射。
+此类存储了语言ID与 **译文映射文件** URL 的映射。
 
-其基本结构是 `{Language ID (key, string) : Translations mapping filepath (value, string)}` 对。其中 `Language ID` 表示语言ID，如 `EN`、`ZH` 等，而 `Translations mapping filepath` 表示语言ID对应的 **译文映射文件** 路径。
+其基本结构是 `{Language ID (key, string) : Translation mapping URL (value, string)}` 对。其中 `Language ID` 表示语言ID，如 `EN`、`ZH` 等，而 `Translation mapping URL` 表示语言ID对应的 **译文映射文件** URL。
 
-### Translations Mapping
+### Translation Mapping
 
 此类存储了译文ID与译文的映射。
 
-其基本结构是 `{Text ID (key, string) : Translation (value, string)}` 对，其中 `Text ID` 表示译文ID，而 `Translation` 表示译文ID对应的译文。
+其基本结构是 `{Translation ID (key, string) : Translation text (value, string)}` 对，其中 `Translation ID` 表示译文ID，而 `Translation text` 表示译文ID对应的译文。
 
 ## 标准使用流程
 
-1. 通过 `setLanguagesMapping` 载入一个 **语言映射文件**，得到语言ID与 **译文映射文件** 路径的映射。
+1. 通过 `setLanguageMapping` 载入一个 **语言映射文件**，得到语言ID与 **译文映射文件** URL 的映射。
 2. 通过 `setLanguage` 改变当前语言ID，这样便能通过语言ID将目标 **译文映射文件** 载入。
 3. 通过 `EASYTR` 宏对程序中的译文ID进行包含（或者调用 `translate`）以获取当前语言下指定译文ID的对应译文。
 
@@ -45,11 +44,11 @@
 
 大多数时候，手动提取译文ID是十分繁琐的。
 
-故可以在程序主循环结束后调用 `updateTranslationsMappingFiles` 来更新译文ID，这会在译文文件中新增一个键值对，其中键被设置为新发现的译文ID，值（译文）被设置为空字符串，并对译文ID重排序。
+故可以在程序主循环结束后通过 `collectedTranslationIds()`/`dumpCollectedTranslationIds()` 来获取所有程序中使用到的译文ID。
 
-使用 `updateTranslationsMappingFiles` 时必须定义 `EASY_TRANSLATE_UPDATE_TRANSLATIONS_MAPPING_FILES` 宏，否则不做任何事情。
+使用以上两个函数时必须定义 `EASY_TRANSLATE_COLLECT_TRANSLATION_ID` 宏。
 
-在定义 `EASY_TRANSLATE_UPDATE_TRANSLATIONS_MAPPING_FILES` 宏时，内部会对每一个读取到的译文ID进行存储，以便在调用 `updateTranslationsMappingFiles` 时对 **译文映射文件** 进行更新，此行为会消耗额外性能。正确的做法应该是在需要提取译文ID时（开发阶段）才定义 `EASY_TRANSLATE_UPDATE_TRANSLATIONS_MAPPING_FILES` 宏。
+在定义了 `EASY_TRANSLATE_COLLECT_TRANSLATION_ID` 宏时，实例内部会对每一个读取到的译文ID进行存储，此行为会增加内存占用。正确的做法应该是在需要提取译文ID时（开发阶段）才定义 `EASY_TRANSLATE_COLLECT_TRANSLATION_ID` 宏。
 
 ## 示例
 

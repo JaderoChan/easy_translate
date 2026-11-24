@@ -19,7 +19,9 @@ int main(int argc, char* argv[])
 
     int ret = a.exec();
 
-    easytr::updateTranslationMappingFile();
+#ifdef EASY_TRANSLATE_COLLECT_TRANSLATION_ID
+    easytr::dumpCollectedTranslationIds("languages/ids.json");
+#endif
 
     return ret;
 }
