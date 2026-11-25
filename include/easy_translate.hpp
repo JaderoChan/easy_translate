@@ -37,7 +37,7 @@
 namespace easytr
 {
 
-/// A mapping table used to record the `Language ID` and the `Translation mapping URL`.
+/// A mapping table used to record the `Language ID` and the `Translation mapping path`.
 class LanguageMapping
 {
     friend class TranslateManager;
@@ -110,7 +110,7 @@ public:
         return true;
     }
 
-    /// @brief Get the `Translation mapping URL` for the given `Language ID`.
+    /// @brief Get the `Translation mapping path` for the given `Language ID`.
     const char* at(const std::string& languageId) const
     { return data_.at(languageId).c_str(); }
 
@@ -133,26 +133,26 @@ public:
         return ids;
     }
 
-    /// @brief Add a pair of `Language ID` and `Translation mapping URL`.
+    /// @brief Add a pair of `Language ID` and `Translation mapping path`.
     /// @note If the `Language ID` already exists, no action is taken.
-    void add(const std::string& languageId, const std::string& url)
+    void add(const std::string& languageId, const std::string& path)
     {
         if (!has(languageId))
-            data_.insert({languageId, url});
+            data_.insert({languageId, path});
     }
 
-    /// @brief Remove a `Language ID` and its corresponding `Translation mapping URL`.
+    /// @brief Remove a `Language ID` and its corresponding `Translation mapping path`.
     void remove(const std::string& languageId)
     {
         if (has(languageId))
             data_.erase(languageId);
     }
 
-    /// @brief Remove all `Language ID`s and their corresponding `Translation mapping URL`s.
+    /// @brief Remove all `Language ID`s and their corresponding `Translation mapping path`s.
     void clear() { data_.clear(); }
 
 private:
-    // {Language ID : Translation mapping URL}
+    // {Language ID : Translation mapping path}
     std::map<std::string, std::string> data_;
 };
 
@@ -284,7 +284,7 @@ private:
 class TranslateManager
 {
 public:
-    using TranslationMappingLoader = TranslationMapping (*)(const std::string& url);
+    using TranslationMappingLoader = TranslationMapping (*)(const std::string& path);
 
     static TranslateManager& instance()
     {
@@ -292,8 +292,8 @@ public:
         return instance;
     }
 
-    /// @brief Set the custom Translation mapping loader for handle `Translation mapping URL` in `Language mapping`.
-    /// @note Default is nullptr and handle `Translation mapping URL` as local file path.
+    /// @brief Set the custom Translation mapping loader for handle `Translation mapping path` in `Language mapping`.
+    /// @note Default is nullptr and handle `Translation mapping path` as local file path.
     void setTranslationMappingLoader(TranslationMappingLoader loader = nullptr)
     {
         loader_ = loader;
@@ -419,8 +419,8 @@ private:
 inline TranslateManager& getTranslateManager()
 { return TranslateManager::instance(); }
 
-/// @brief Set the custom Translation mapping loader for handle `Translation mapping URL` in `Language mapping`.
-/// @note Default is nullptr and handle `Translation mapping URL` as local file path.
+/// @brief Set the custom Translation mapping loader for handle `Translation mapping path` in `Language mapping`.
+/// @note Default is nullptr and handle `Translation mapping path` as local file path.
 inline void setTranslationMappingLoader(TranslateManager::TranslationMappingLoader loader = nullptr)
 { getTranslateManager().setTranslationMappingLoader(loader); }
 

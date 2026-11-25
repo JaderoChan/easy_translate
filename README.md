@@ -24,9 +24,9 @@
 
 ### Language Mapping
 
-此类存储了语言ID与 **译文映射文件** URL 的映射。
+此类存储了语言ID与 **译文映射文件** path 的映射。
 
-其基本结构是 `{Language ID (key, string) : Translation mapping URL (value, string)}` 对。其中 `Language ID` 表示语言ID，如 `EN`、`ZH` 等，而 `Translation mapping URL` 表示语言ID对应的 **译文映射文件** URL。
+其基本结构是 `{Language ID (key, string) : Translation mapping path (value, string)}` 对。其中 `Language ID` 表示语言ID，如 `EN`、`ZH` 等，而 `Translation mapping path` 表示语言ID对应的 **译文映射文件** path。
 
 ### Translation Mapping
 
@@ -36,7 +36,7 @@
 
 ## 标准使用流程
 
-1. 通过 `setLanguageMapping` 载入一个 **语言映射文件**，得到语言ID与 **译文映射文件** URL 的映射。
+1. 通过 `setLanguageMapping` 载入一个 **语言映射文件**，得到语言ID与 **译文映射文件** path 的映射。
 2. 通过 `setLanguage` 改变当前语言ID，这样便能通过语言ID将目标 **译文映射文件** 载入。
 3. 通过 `EASYTR` 宏对程序中的译文ID进行包含（或者调用 `translate`）以获取当前语言下指定译文ID的对应译文。
 

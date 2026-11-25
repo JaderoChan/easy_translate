@@ -24,9 +24,9 @@ This is a mini library written in C++11 that helps you quickly implement UI text
 
 ### Language Mapping
 
-This class stores the mapping between language IDs and **Translation Mapping File** URLs.
+This class stores the mapping between language IDs and **Translation Mapping File** paths.
 
-Its basic structure is a `{Language ID (key, string) : Translation mapping URL (value, string)}` pair, where `Language ID` represents the language ID, such as `EN`, `ZH`, etc., and `Translation mapping URL` represents the **Translation Mapping File** URL corresponding to the language ID.
+Its basic structure is a `{Language ID (key, string) : Translation mapping path (value, string)}` pair, where `Language ID` represents the language ID, such as `EN`, `ZH`, etc., and `Translation mapping path` represents the **Translation Mapping File** path corresponding to the language ID.
 
 ### Translation Mapping
 
@@ -36,7 +36,7 @@ Its basic structure is a `{Translation ID (key, string) : Translation text (valu
 
 ## Standard Usage Flow
 
-1. Load a **Language Mapping File** via `setLanguageMapping` to obtain the mapping between language IDs and **Translation Mapping File** URLs.
+1. Load a **Language Mapping File** via `setLanguageMapping` to obtain the mapping between language IDs and **Translation Mapping File** paths.
 2. Change the current language ID via `setLanguage`, so that the target **Translation Mapping File** can be loaded via the language ID.
 3. Wrap the translation IDs in your program with the `EASYTR` macro (or call `translate`) to get the corresponding translation text for the specified translation ID in the current language.
 
